@@ -20,59 +20,40 @@ var google_trans = L.tileLayer('https://mt1.google.com/vt?lyrs=h@159000000,traff
     maxZoom: 18
 }); 
 
+//Estilo de estaciones de trenes
 
-//icono publico
-var publico = L.icon
-	({
-	iconUrl: 'https://cdn-icons-png.flaticon.com/512/3448/3448390.png',
-	shadowUrl: '',
-	iconSize: [30, 30], //recomendado
-	iconAnchor: [5, 10], //la itad e igual
-    popupAnchor: [0, -10],
-    //shadowSize: [50, 50] // igual a icono
-	});
-    
-    var awesomeIcons = ['font', 'cloud-download', 'medkit', 'github-alt', 'coffee', 'twitter', 'shopping-cart', 'tags', 'star'];
+function createCustomIcon (feature, latlng) {
+	let myIcon = L.icon({
+	  iconUrl: 'https://cdn-icons-png.flaticon.com/512/1783/1783356.png',
+	  iconSize:     [20, 20], // width and height of the image in pixels
+	  shadowSize:   [35, 20], // width, height of optional shadow image
+	  iconAnchor:   [12, 12], // point of the icon which will correspond to marker's location
+	  shadowAnchor: [12, 6],  // anchor point of the shadow. should be offset
+	  popupAnchor:  [0, 0] // point from which the popup should open relative to the iconAnchor
+	})
+	return L.marker(latlng, { icon: myIcon })
+  }
+  
+  // create an options object that specifies which function will called on each feature
+  let myLayerOptions = {
+	pointToLayer: createCustomIcon
+  }
 
-//icono bancos
-var bank = L.icon
-	({
-	iconUrl: 'https://cdn-icons-png.flaticon.com/512/3448/3448477.png',
-	shadowUrl: '',
-	iconSize: [30, 30], //recomendado
-	iconAnchor: [5, 10], //la itad e igual
-    popupAnchor: [0, -10],
-    //shadowSize: [50, 50] // igual a icono
-	});
+  var stylebike = {
+	color: "#1C2833",
+	weight: 3,
+	opacity: 0.6,
+	dashArray: '7, 7, 7'
+	 };
 
 
-//icono empresas
-var empresa = L.icon
-({
-iconUrl: 'https://cdn-icons-png.flaticon.com/512/7142/7142238.png',
-shadowUrl: '',
-iconSize: [25, 25], //recomendado
-iconAnchor: [5, 10], //la itad e igual
-popupAnchor: [0, -10],
-//shadowSize: [50, 50] // igual a icono
-});
-    
-    
-      
-      
-//stilo del area 
-    var myStyle = {
-    "color": "#fcc2e9",
-    "weight": 10,
-    "opacity": 0.5 };
+  var stylebus = {
+	color: "#5153FF",
+	weight: 3,
+	opacity: 0.6,
+	dashArray: '7, 7, 7'
+	  };
 
-//stilo del area 
-var myStyle2 = {
-    "color": "#2EACF9",
-    "weight": 4,
-    "opacity": 1 };
-
- 
 // ZOOM A MARCADOR
 var xxy = function(e){
     var coord = e.latlng.toString().split(',');
@@ -82,13 +63,23 @@ var xxy = function(e){
     map.flyTo([lat[1], lng[0]], 16, {animate: true,duration: 2 });}
 
 
-//marcadores
-var area = L.geoJson(area, {style: myStyle})
-var adelrey = L.geoJson(adelrey, {style: myStyle2}).bindPopup("<strong>Arroyo del Rey<strong>"+ "<br/>" + "<img src= 'arroyo.jpg'/>" + "<br/>" + "El arroyo del Rey es un curso "+ "<br/>" +"de agua que nace en las cercanías "+ "<br/>" +" del Barrio Rayo de Sol"+ "<br/>" +"(Longchamps),"+ "<br/>" +" provincia de Buenos Aires, para "+ "<br/>" +"desembocar en el Riachuelo,"+ "<br/>" +" con una trayectoria de 18 kilómetros").on('click', xxy);
-var cefip = L.marker([-34.836746, -58.405327], {icon: publico}).bindPopup("Centro de Formacion Profesional e Innovacion Productiva" + "<br/>" + "<img src= 'cefip.jpg'/>").on('click',xxy);
-var galicia = L.marker([-34.8342712,-58.4109098], {icon: bank},13).bindPopup("<strong>Banco Galicia</strong>" + "<br/>" + "Avenida Monteverde 3793" + "<br/>" + "Contacto: 8107773333" + "<br/>" + "<img src= 'galicia.jpg'/>" + "<A HREF='http://bancogalicia.com/'> Mas info... </A> " ).on('click', xxy);
-var recorrido = L.geoJson(recorrido, {icon: publico})
-var puntos = L.geoJson(puntos, {icon: publico})
+//Datos recorridos en bicicleta
+
+var recorrido1 = L.geoJson(recorrido1, stylebike)
+var recorrido2 = L.geoJson(recorrido2, stylebike)
+
+
+//Datos colectivos
+var cole1 = L.geoJson(cole1 ,stylebus)
+var cole2 = L.geoJson(cole2,stylebus)
+var cole3 = L.geoJson(cole3,stylebus)
+var cole4 = L.geoJson(cole4,stylebus)
+
+
+  
+// create the GeoJSON layer
+ var estaciones= L.geoJSON(estaciones, myLayerOptions)
+
 
 
 
@@ -109,18 +100,23 @@ var baseMaps = [
 
 var overlays = [
 							 {
-								groupName : "informacion espacial",
+								groupName : "Transporte publico",
 								expanded : true,
+								
 								layers    : { 
-									"Area SIPAB": area,
-									"Cursos de agus" : adelrey,
+									"Recorrido 506 - Ramal 7": cole1,
+									"Recorrido 501 - Ramal 1": cole2,
+									"Recorrido 501 - Los Altos": cole3,
+									"Recorrido 510":cole4,
+									"Linea Roca": estaciones
+									
 			
 								}	
                              },{
 								groupName : "Instituciones publicas",
 								expanded : true,
 								layers    : { 
-									"CEFIP" : cefip
+									
 								}	
                              },
 							 
@@ -128,22 +124,23 @@ var overlays = [
 								groupName : "servicios bancarios",
 								expanded : true,
 								layers    : { 
-									"Banco Galicia" : galicia
+									
 								}	
                              },
 							 {
 								groupName : "Recorridos en Bicicleta",
 								expanded : true,
 								layers    : { 
-									"Circuito 3":recorrido,
-									"Puntos de interes R3" : puntos, 
+									"Circuito N°1":recorrido1,
+									"Circuito N°2": recorrido2
+									
 									
 								}	
                              },
                              
                              ]
 
-// configure StyledLayerControl options for the layer soybeans_sp
+// configuracion de los estilos de capas
 
 
             var options = {
@@ -158,8 +155,6 @@ var overlays = [
 		    var control = L.Control.styledLayerControl(baseMaps, overlays, options);
 			map.addControl(control);
 
-			var credctrl = L.controlCredits({
-				image: "./designer.png",
-				link: "https://www.instagram.com/profe.robles/",
-				text: "Datos de desarrollo<br/>Rodrigo Robles"
-			}).addTo(map);
+			
+
+			
